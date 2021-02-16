@@ -2,7 +2,7 @@
 % Please edit documentation in R/lacpd_mw.R
 \name{lacpd_mw}
 \alias{lacpd_mw}
-\title{Locally change-point detection using the Mann-Whitney test}
+\title{Locally adaptive change-point detection using the Mann-Whitney test}
 \usage{
 lacpd_mw(
   x,
@@ -44,9 +44,9 @@ lacpd_mw(
 \value{
 adaptive window: the automatic selected adaptive window.
 
-change-point: the index of the most probable change point in the time series
+change-point: the index of the most probable change-point in the time series
 
-statistics: the z statistics of LACPD
+statistics: the Z statistics of LACPD
 
 magnitude: the magnitude of change
 
@@ -55,7 +55,7 @@ p.value: the corresponding p.value
 
 Attributes:
 
-attr(,"zs"): retrieves the obtained z statistics at the time-periods the function has looked for potential changes
+attr(,"zs"): retrieves the obtained Z statistics at the time-periods the function has looked for potential changes
 
 attr(,"ps"): retrieves the obtained p-values at the time-periods the function has looked for potential changes
 
@@ -66,7 +66,7 @@ if \code{history=TRUE} and \code{k} is a numeric vector, then the following attr
 
 attr(,"history"): a dataframe containing the results (cp, magnitude, Z, and p.value) based on different adaptive sliding windows which are permutations of the given \code{k}
 
-attr(,"allzs"): a list which retrieves the obtained z statistics at the time-periods the function has looked for potential changes based on different adaptive sliding windows which are permutations of the given \code{k}
+attr(,"allzs"): a list which retrieves the obtained Z statistics at the time-periods the function has looked for potential changes based on different adaptive sliding windows which are permutations of the given \code{k}
 
 attr(,"allmags"): a list which retrieves the magnitude of change at the time-periods the function has looked for potential changes based on different adaptive sliding windows which are permutations of the given \code{k}
 
@@ -79,27 +79,26 @@ attr(,"pmat"): a matrix of p-values for each individual sliding window
 attr(,"mmat"): a matrix of magnitudes for each individual sliding window
 }
 \description{
-Locally change-point detection after accommodating the Mann-Whitney test in the LACPD procedure
+Locally adaptive change-point detection after accommodating the Mann-Whitney test in the LACPD procedure
 }
 \details{
 This technique accommodates the \link[stats]{wilcox.test} in the LACPD procedure of Moradi et al. (2020) to look for potential change-points in the numerical vector \code{x}.
 
-In the tails of \code{x}, since there are not enough data points before/after the target points, the method uses sub-sampling, wherein it moderates the effect of sub-sampling by iteration.
+The LACPD procedure is based on an iteration of several sliding windows of different widths. In the tails of \code{x}, since there are not enough data points before/after the target points, the method uses sub-sampling, wherein it moderates the effect of sub-sampling by \code{m} iteration.
 
-Assume the length of \code{x} is n. The argument \code{k} is used to set the number of data in the sides of the target point when looking for change-points. n/\code{k}  is the number of points on each side we consider. For instance, if n=300 and k=10, this means we consider 30 observations before and 30 after when locally detecting changes.
+Assume the length of \code{x} is n. The argument \code{k} is used to set the number of data points in each sides of the target point when looking for change-points. \code{n}/\code{k}  is the number of points on each side we consider. For instance, if \code{n=300} and \code{k=10}, this means we consider \code{30} observations before and 30 after the target point when locally detecting changes.
 
-If \code{adjust=TRUE}, methods susch as "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none" can be passed through, e.g. method="BY".
+If \code{adjust=TRUE}, methods susch as "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none" can be passed through, e.g. \code{method="BY"}.
 
 If \code{k} is a vector of numbers, then the function returns a result based on adaptive sliding windows which is an average result obtained from different windows.
 }
 \examples{
-x <- rnorm(50)
-Z <- lacpd_mw(x,m=10,k=3)
-plot(Z$s,attr(Z,"zs"),type="l",ylab = "Z",xlab = "time")
-plot(Z$s,attr(Z,"mags"),type="l",ylab = "Z",xlab = "time")
+x <- rnorm(100)
+Z <- lacpd_mw(x,m=10,k=c(2:5),history = TRUE,adjust = TRUE,method="BY")
+plot(Z,type="l",ylab = "Z",xlab = "time")
 }
 \references{
-Moradi, M., Montesino-SanMartin, M., Ugarte, M. D., and Militino, A. F. (2020). Locally adaptive change-point detection with applications to remote sensing and land use changes.
+Moradi, M., Montesino-SanMartin, M., Ugarte, M. D., and Militino, A. F. (2021). Locally adaptive change-point detection with applications to remote sensing and land use changes.
 }
 \seealso{
 \link[stats]{wilcox.test}, \link[stats]{p.adjust}
